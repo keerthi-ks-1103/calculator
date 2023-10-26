@@ -1,0 +1,73 @@
+import tkinter as tk
+from tkinter import ttk
+
+# Function to perform arithmetic operations
+def calculate():
+    try:
+        expression = entry.get()
+        # Handle addition separately
+        if '+' in expression:
+            parts = expression.split('+')
+            result = sum(float(part) for part in parts)
+        else:
+            result = str(eval(expression))
+        entry.delete(0, tk.END)
+        entry.insert(0, result)
+    except Exception:
+        entry.delete(0, tk.END)
+        entry.insert(0, "Error")
+
+# Create the main application window
+app = tk.Tk()
+app.title("Calculator")
+
+# Set the background color of the main window to pink
+app.configure(bg="cyan")
+
+# Entry field to display the input and output
+entry = tk.Entry(app, width=25, font=('Arial', 24), bg='#444444', fg='white')
+entry.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
+
+# Button labels and their positions
+buttons = [
+    "7", "8", "9", "/",
+    "4", "5", "6", "*",
+    "1", "2", "3", "-",
+    "0", "C", "=", "+"
+]
+
+# Create a custom style for the buttons with font size and pink color
+style = ttk.Style()
+style.configure("TButton", font=('Arial', 16), background="pink")
+style.map("TButton", background=[("active", "hotpink"), ("!active", "pink")])
+
+# Create buttons and add them to the grid with a pink background
+row, col = 1, 0
+for button in buttons:
+    if button == "=":
+        ttk.Button(app, text=button, command=calculate, style="TButton").grid(row=row, column=col, padx=5, pady=5)
+    elif button == "C":
+        ttk.Button(app, text=button, command=lambda b=button: entry.delete(0, tk.END), style="TButton").grid(row=row, column=col, padx=5, pady=5)
+    elif button.isnumeric():
+        ttk.Button(app, text=button, command=lambda b=button: entry.insert(tk.END, b), style="TButton").grid(row=row, column=col, padx=5, pady=5)
+    else:
+        ttk.Button(app, text=button, command=lambda b=button: entry.insert(tk.END, b), style="TButton").grid(row=row, column=col, padx=5, pady=5)
+    
+    col += 1
+    if col > 3:
+        col = 0
+        row += 1
+
+# Calculate the screen center
+screen_width = app.winfo_screenwidth()
+screen_height = app.winfo_screenheight()
+app_width = 400
+app_height = 500
+x = (screen_width - app_width) // 2
+y = (screen_height - app_height) // 2
+
+# Center the window
+app.geometry(f"{app_width}x{app_height}+{x}+{y}")
+
+# Run the application
+app.mainloop()
